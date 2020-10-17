@@ -87,34 +87,40 @@
         }
 
         const moveToCell = (mat, siz, fromx, fromy, x, y) => {
-            const curCell = getCell(fromx, fromy)
-            const toCell = getCell(x, y) 
+            if(!(fromx == x && fromy == y)) {
+                const curCell = getCell(fromx, fromy)
+                const toCell = getCell(x, y) 
 
-            const value = mat[fromx][fromy]
+                const value = mat[fromx][fromy]
 
-            const pion = document.createElement("div")
-            if(siz == 8) {
-                if(value == 1) {
-                    pion.setAttribute("class", "pion-8x8")
-                } else if (value == 2) {
-                    pion.setAttribute("class", "pion-8x8 invert-pion")
+                const pion = document.createElement("div")
+                if(siz == 8) {
+                    if(value == 1) {
+                        pion.setAttribute("class", "pion-8x8")
+                    } else if (value == 2) {
+                        pion.setAttribute("class", "pion-8x8 invert-pion")
+                    }
+                } else if(siz == 10) {
+                    if(value == 1) {
+                        pion.setAttribute("class", "pion-10x10")
+                    } else if (value == 2) {
+                        pion.setAttribute("class", "pion-10x10 invert-pion")
+                    }
+                } else {
+                    if(value == 1) {
+                        pion.setAttribute("class", "pion-16x16")
+                    } else if (value == 2) {
+                        pion.setAttribute("class", "pion-16x16 invert-pion")
+                    }
                 }
-            } else if(siz == 10) {
-                if(value == 1) {
-                    pion.setAttribute("class", "pion-10x10")
-                } else if (value == 2) {
-                    pion.setAttribute("class", "pion-10x10 invert-pion")
-                }
+
+                toCell.appendChild(pion)
+                curCell.innerHTML = ""
             } else {
-                if(value == 1) {
-                    pion.setAttribute("class", "pion-16x16")
-                } else if (value == 2) {
-                    pion.setAttribute("class", "pion-16x16 invert-pion")
-                }
+                document.querySelectorAll('.selected-cell').forEach((node) => {
+                    node.remove()
+                })
             }
-
-            toCell.appendChild(pion)
-            curCell.innerHTML = ""
         }
 
         const createBoard = (mat, clickmat, siz) => {
@@ -151,6 +157,8 @@
                                 }
                             }
 
+                            clickmat[i][j] = 3
+
                             const overlay = document.createElement("div")
                             overlay.setAttribute("class", "selected-cell")
                             cell.appendChild(overlay)
@@ -166,11 +174,13 @@
                             })
 
                             selectedCell = [i, j, mat[i][j]]
-                        } else if(clickmat[i][j] == 2) {
+                        } else if(clickmat[i][j] == 2 || clickmat[i][j] == 3) {
                             moveToCell(mat, siz, selectedCell[0], selectedCell[1], i, j)
                             
-                            mat[i][j] = selectedCell[2]
-                            mat[selectedCell[0]][selectedCell[1]] = 0
+                            if(clickmat[i][j] == 2) {
+                                mat[i][j] = selectedCell[2]
+                                mat[selectedCell[0]][selectedCell[1]] = 0
+                            }
 
                             selectedCell = null 
                             for(let a = 0; a < siz; a++) {
