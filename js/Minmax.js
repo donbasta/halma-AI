@@ -11,10 +11,14 @@ class Node {
 }
 
 //create the tree and fill the tree using minmax algo
-class MinmaxTree {
-  constructor(currentState, depth) {
+class MinimaxTree {
+  constructor(currentState, depth, pruning) {
     this.root = new Node(currentState);
-    this.expand(this.root, depth);
+    if (!pruning) {
+      this.expand(this.root, depth);
+    } else {
+      this.expandPruning(this.root, depth, -INF, INF);
+    }
   }
 
   expand(node, depth) {
@@ -22,31 +26,71 @@ class MinmaxTree {
       node.minmax = utilityFunction(node.state.board);
       return;
     }
-    let temp_value;
+
+    let tempValue;
     if (node.state.player == 1) {
-      temp_value = -INF;
+      tempValue = -INF;
     } else if (node.state.player == 2) {
-      temp_value = INF;
+      tempValue = INF;
     }
+
     let neighbors = generateNextState(node.state);
-    neighbors.forEach (neighbor => {
+    for (let i = 0; i < neighbors.length; i++) {
+      let neighbor = neighbors[i];
       let childNode = new Node(neighbor);
       this.expand(childNode, depth - 1);
       node.children.push(childNode);
       if (node.state.player == 1) {
-        temp_value = Math.max(temp_value, childNode.minmax);
+        tempValue = Math.max(tempValue, childNode.minmax);
       } else if (node.state.player == 2) {
-        temp_value = Math.min(temp_value, childNode.minmax);
+        tempValue = Math.min(tempValue, childNode.minmax);
       }
-    });
-    node.minmax = temp_value;
+    }
+    node.minmax = tempValue;
+  }
+
+  //for alpha-beta pruning, not fixed yet
+  expandPruning(node, depth, alpha, beta) {
+    if (depth == 0) {
+      node.minmax = utilityFunction(node.state.board);
+      return;
+    }
+
+    let tempValue;
+    if (node.state.player == 1) {
+      tempValue = -INF;
+    } else if (node.state.player == 2) {
+      tempValue = INF;
+    }
+
+    let neighbors = generateNextState(node.state);
+    for (let i = 0; i < neighbors.length; i++) {
+      let neighbor = neighbors[i];
+      let childNode = new Node(neighbor);
+      this.expandPruning(childNode, depth - 1, alpha, beta);
+      node.children.push(childNode);
+      if (node.state.player == 1) {
+        tempValue = Math.max(tempValue, childNode.minmax);
+        if (tempValue >= beta) {
+          break;
+        }
+        alpha = Math.max(alpha, tempValue);
+      } else if (node.state.player == 2) {
+        tempValue = Math.min(tempValue, childNode.minmax);
+        if (tempValue <= alpha) {
+          break;
+        }
+        beta = Math.min(beta, tempValue);
+      }
+    }
+    node.minmax = tempValue;
   }
 }
 
 //current game state and which player is moving
-class Minmax {
-  constructor(state, depth) {
-    this.tree = new MinmaxTree(state, depth);
+class Minimax {
+  constructor(state, depth, pruning) {
+    this.tree = new MinimaxTree(state, depth, pruning);
     this.value = this.tree.root.minmax;
     this.neighbors = generateNextState(state);
     this.player = state.player;
@@ -59,7 +103,7 @@ class Minmax {
         ret = neighbor.state;
       }
     });
-    return ret;
+    this.nextMoveBest = ret;
   }
 
   getMoveRandom() {
@@ -73,28 +117,32 @@ class Minmax {
       let nextValue = utilityFunction(randomNeighbor);
       if (this.player == 1) {
         if (nextValue >= curValue) {
-          return randomNeighbor;
+          this.nextMoveRandom = randomNeighbor;
+          return;
         } else {
           let delta = Math.abs(curValue - nextValue);
           let temp = 10;
           let prob = 1.0 / Math.pow(Math.E, delta / temp);
           let random = Math.random();
           if(random <= prob) {
-            return randomNeighbor;
+            this.nextMoveRandom = randomNeighbor;
+            return;
           } else {
             attempt = attempt + 1;
           }
         }
       } else if (this.player == 2) {
         if (nextValue <= curValue) {
-          return randomNeighbor;
+          this.nextMoveRandom = randomNeighbor;
+          return;
         } else {
           let delta = Math.abs(curValue - nextValue);
           let temp = 10;
           let prob = 1.0 / Math.pow(Math.E, delta / temp);
           let random = Math.random();
           if(random <= prob) {
-            return randomNeighbor;
+            this.nextMoveRandom = randomNeighbor;
+            return;
           } else {
             attempt = attempt + 1;
           }
@@ -105,12 +153,32 @@ class Minmax {
   }
 }
 
-// let state = new GameState(null, 8, 1);
-// let botMoveMinmax = new Minmax(state, 3);
-// console.log("next move to choose using minmax: ", botMoveMinmax.getMoveBest());
-// console.log("next move to choose using minmax + localsearch: ", botMoveMinmax.getMoveRandom());
+//----------------------------------------------------------------------------------------
+
+// TEST
+
+// function getNanoSecTime() {
+//   const hrTime = process.hrtime();
+//   return hrTime[0] * 1000000000 + hrTime[1];
+// }
+
+// let state1 = new GameState(null, 40, 1);
+// let pruneAwal = getNanoSecTime();
+// let botMoveMinimaxPruning = new Minimax(state1, 3, true);
+// botMoveMinimaxPruning.getMoveBest();
+// let pruneAkhir = getNanoSecTime();
+// console.log(`value with pruning: ${botMoveMinimaxPruning.value}`);
+// console.log(pruneAwal);
+// console.log(pruneAkhir);
+// console.log(`With pruning: ${pruneAkhir - pruneAwal} ns`);
 
 
-
-
-
+// let state2 = new GameState(null, 20, 1);
+// let noPruneAwal = getNanoSecTime();
+// let botMoveMinimax = new Minimax(state2, 3, false);
+// botMoveMinimax.getMoveBest();
+// let noPruneAkhir = getNanoSecTime();
+// console.log(`value without pruning: ${botMoveMinimax.value}`);
+// console.log(noPruneAwal);
+// console.log(noPruneAkhir);
+// console.log(`Without pruning: ${noPruneAkhir - noPruneAwal} ns`);
