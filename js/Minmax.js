@@ -110,8 +110,8 @@ class Minimax {
     const MAX_ATTEMPT = 100;
     let curValue = this.value;
     let attempt = 0;
-    let found = false;
-    while(!found && attempt < MAX_ATTEMPT) {
+    //let found = false;
+    while(attempt < MAX_ATTEMPT) {
       let randomPosition = Math.floor(Math.random() * this.neighbors.length);
       let randomNeighbor = this.neighbors[randomPosition];
       let nextValue = utilityFunction(randomNeighbor);
