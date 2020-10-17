@@ -19,8 +19,10 @@
         </div>
     </div>
 
+    <script src="js/Util.js"></script>
+
     <script>
-        matrix = [
+        let matrix = [
             [1,1,1,0,0,0,0,0],
             [1,1,0,0,0,0,0,0],
             [1,1,0,0,0,0,0,0],
@@ -30,6 +32,19 @@
             [0,0,0,0,0,2,2,2],
             [0,0,0,0,0,2,2,2],
         ]
+
+        let clickState = [
+            [1,1,1,0,0,0,0,0],
+            [1,1,0,0,0,0,0,0],
+            [1,1,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,0,0,0],
+            [0,0,0,0,0,1,1,1],
+            [0,0,0,0,0,1,1,1],
+        ]
+
+        let selectedCell = null
 
         const createCell = (value, invert, siz) => {
             const cell = document.createElement("div") 
@@ -65,36 +80,117 @@
             return cell
         }
 
-        const createBoard = (mat, siz) => {
-                const board = document.getElementById("board")
-                if(siz == 8) {
-                    board.classList.add("board-8x8")
-                } else if(siz == 10) {
-                    board.classList.add("board-10x10")
-                } else {
-                    board.classList.add("board-16x16")
-                }
-                for(let i = 0; i < siz; i++) {
-                    
-                    for(let j = 0; j < siz; j++) {
-                        let invert = false 
-                        if((i + j) % 2 == 1) {
-                            invert = true
-                        }
-                        const cell = createCell(mat[i][j], invert, siz)
+        const getCell = (x, y) => {
+            const id = "id_" + x.toString(10) + "_" + y.toString(10)
 
-                        const id = "id_" + i.toString(10) + "_" + j.toString(10)
-
-                        cell.setAttribute("id", id)
-
-                        board.appendChild(cell)
-
-                        invert = !invert
-                    }
-                }
+            return document.getElementById(id)
         }
 
-        createBoard(matrix, 8)
+        const moveToCell = (mat, siz, fromx, fromy, x, y) => {
+            const curCell = getCell(fromx, fromy)
+            const toCell = getCell(x, y) 
+
+            const value = mat[fromx][fromy]
+
+            const pion = document.createElement("div")
+            if(siz == 8) {
+                if(value == 1) {
+                    pion.setAttribute("class", "pion-8x8")
+                } else if (value == 2) {
+                    pion.setAttribute("class", "pion-8x8 invert-pion")
+                }
+            } else if(siz == 10) {
+                if(value == 1) {
+                    pion.setAttribute("class", "pion-10x10")
+                } else if (value == 2) {
+                    pion.setAttribute("class", "pion-10x10 invert-pion")
+                }
+            } else {
+                if(value == 1) {
+                    pion.setAttribute("class", "pion-16x16")
+                } else if (value == 2) {
+                    pion.setAttribute("class", "pion-16x16 invert-pion")
+                }
+            }
+
+            toCell.appendChild(pion)
+            curCell.innerHTML = ""
+        }
+
+        const createBoard = (mat, clickmat, siz) => {
+            const board = document.getElementById("board")
+            if(siz == 8) {
+                board.classList.add("board-8x8")
+            } else if(siz == 10) {
+                board.classList.add("board-10x10")
+            } else {
+                board.classList.add("board-16x16")
+            }
+            for(let i = 0; i < siz; i++) {
+                
+                for(let j = 0; j < siz; j++) {
+                    let invert = false 
+                    if((i + j) % 2 == 1) {
+                        invert = true
+                    }
+                    const cell = createCell(mat[i][j], invert, siz)
+
+                    const id = "id_" + i.toString(10) + "_" + j.toString(10)
+
+                    cell.setAttribute("id", id)
+
+                    board.appendChild(cell)
+
+                    invert = !invert
+                    
+                    cell.addEventListener("click", (e) => {
+                        if(clickmat[i][j] == 1) {
+                            for(let a = 0; a < siz; a++) {
+                                for(let b = 0; b < siz; b++) {
+                                    clickmat[a][b] = 0
+                                }
+                            }
+
+                            const overlay = document.createElement("div")
+                            overlay.setAttribute("class", "selected-cell")
+                            cell.appendChild(overlay)
+
+                            const availablePos = findAvailablePositions(i, j, matrix)
+                            availablePos.map((value) => {
+                                clickmat[value[0]][value[1]] = 2
+
+                                let curCell = getCell(value[0], value[1])
+                                const overlay = document.createElement("div")
+                                overlay.setAttribute("class", "avail")
+                                curCell.appendChild(overlay)
+                            })
+
+                            selectedCell = [i, j, mat[i][j]]
+                        } else if(clickmat[i][j] == 2) {
+                            moveToCell(mat, siz, selectedCell[0], selectedCell[1], i, j)
+                            
+                            mat[i][j] = selectedCell[2]
+                            mat[selectedCell[0]][selectedCell[1]] = 0
+
+                            selectedCell = null 
+                            for(let a = 0; a < siz; a++) {
+                                for(let b = 0; b < siz; b++) {
+                                    if(mat[a][b] > 0) {
+                                        clickmat[a][b] = 1
+                                    }
+                                }
+                            }
+
+                            document.querySelectorAll('.avail').forEach((node) => {
+                                node.remove()
+                            })
+                        }
+                    })
+                }
+            }
+        }
+
+        createBoard(matrix, clickState, 8)
     </script>
 </body>
 

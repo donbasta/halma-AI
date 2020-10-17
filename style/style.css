@@ -50,6 +50,7 @@ body, html {
 }
 
 .cell-16x16 {
+    position: relative;
     width: 40px;
     height: 40px;
     display: flex;
@@ -59,6 +60,7 @@ body, html {
 }
 
 .pion-16x16 {
+    cursor: pointer;
     width: 30px;
     height: 30px;
     border-radius: 100%;
@@ -66,6 +68,7 @@ body, html {
 }
 
 .cell-8x8 {
+    position: relative;
     width: 80px;
     height: 80px;
     display: flex;
@@ -75,6 +78,7 @@ body, html {
 }
 
 .pion-8x8 {
+    cursor: pointer;
     width: 60px;
     height: 60px;
     border-radius: 100%;
@@ -82,6 +86,7 @@ body, html {
 }
 
 .cell-10x10 {
+    position: relative;
     width: 64px;
     height: 64px;
     display: flex;
@@ -91,6 +96,7 @@ body, html {
 }
 
 .pion-10x10 {
+    cursor: pointer;
     width: 48px;
     height: 48px;
     border-radius: 100%;
@@ -104,4 +110,24 @@ body, html {
 
 .invert-pion {
     background-color: rgb(48, 167, 131);
+}
+
+.selected-cell {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(34, 31, 194, 0.5);
+    z-index: 5;
+}
+
+.avail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(251, 255, 0, 0.5);
+    z-index: 5;
 }
