@@ -44,9 +44,21 @@ function findAvailablePositions(x, y, board) {
         retPositions.push([tx, ty]);
       }
     }
-  }
-  return retPositions;
-}
+	}
+	
+	const playerType = board[x][y];
+	const otherPlayer = 3 - board[x][y];
+	if (positionInCorner(x, y, BSize, otherPlayer)) {
+		/** if in a corner of enemy, must always be in the corner enemy */
+		retPositions = retPositions.filter((pos) => {
+			return positionInCorner(pos[0], pos[1], BSize, otherPlayer);
+		});
+	} else if (!positionInCorner(x, y, BSize, playerType)) {
+		/** if outside self corner, must always be outside self corner */
+		retPositions = retPositions.filter((pos) => {
+			return !(positionInCorner(pos[0], pos[1], BSize, playerType));
+		});
+	}
 
   return retPositions;
 }
@@ -128,11 +140,14 @@ function generateNextState(state) {
 
 // For Debugging Purposes
 // let board = [
-//   [0, 0, 0, 0, 0],
-//   [1, 0, 0, 2, 2],
-//   [1, 1, 1, 0, 0],
-//   [1, 1, 1, 0, 0],
-//   [1, 1, 1, 1, 0]
+// 	[0, 0, 0, 0, 0, 1, 0, 0],
+// 	[0, 0, 0, 0, 0, 0, 0, 0],
+// 	[0, 0, 0, 0, 0, 0, 0, 0],
+// 	[0, 0, 0, 0, 0, 0, 0, 0],
+// 	[0, 0, 0, 0, 0, 0, 0, 0],
+// 	[0, 0, 0, 0, 0, 0, 0, 0],
+// 	[0, 0, 0, 0, 0, 0, 0, 0],
+// 	[0, 0, 0, 0, 0, 0, 0, 0]
 // ];
 // console.log(utilityFunction(board));
-// console.log(findAvailablePositions(2, 2, board).sort());
+// console.log(findAvailablePositions(0, 5, board).sort());
