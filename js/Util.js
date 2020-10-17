@@ -49,15 +49,15 @@ function findAvailablePositions(x, y, board) {
 	const playerType = board[x][y];
 	const otherPlayer = 3 - board[x][y];
 	if (positionInCorner(x, y, BSize, otherPlayer)) {
-		/** if in a corner of enemy, must always be in the corner enemy */
-		retPositions = retPositions.filter((pos) => {
-			return positionInCorner(pos[0], pos[1], BSize, otherPlayer);
-		});
+	  /** if in a corner of enemy, must always be in the corner enemy */
+	  retPositions = retPositions.filter((pos) => {
+		return positionInCorner(pos[0], pos[1], BSize, otherPlayer);
+	  });
 	} else if (!positionInCorner(x, y, BSize, playerType)) {
-		/** if outside self corner, must always be outside self corner */
-		retPositions = retPositions.filter((pos) => {
-			return !(positionInCorner(pos[0], pos[1], BSize, playerType));
-		});
+	  /** if outside self corner, must always be outside self corner */
+	  retPositions = retPositions.filter((pos) => {
+		return !(positionInCorner(pos[0], pos[1], BSize, playerType));
+	  });
 	}
 
   return retPositions;
