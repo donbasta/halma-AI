@@ -44,21 +44,21 @@ function findAvailablePositions(x, y, board) {
         retPositions.push([tx, ty]);
       }
     }
-	}
-	
-	const playerType = board[x][y];
-	const otherPlayer = 3 - board[x][y];
-	if (positionInCorner(x, y, BSize, otherPlayer)) {
-	  /** if in a corner of enemy, must always be in the corner enemy */
-	  retPositions = retPositions.filter((pos) => {
-		return positionInCorner(pos[0], pos[1], BSize, otherPlayer);
-	  });
-	} else if (!positionInCorner(x, y, BSize, playerType)) {
-	  /** if outside self corner, must always be outside self corner */
-	  retPositions = retPositions.filter((pos) => {
-		return !(positionInCorner(pos[0], pos[1], BSize, playerType));
-	  });
-	}
+  }
+
+  const playerType = board[x][y];
+  const otherPlayer = 3 - board[x][y];
+  if (positionInCorner(x, y, BSize, otherPlayer)) {
+    /** if in a corner of enemy, must always be in the corner enemy */
+    retPositions = retPositions.filter((pos) => {
+      return positionInCorner(pos[0], pos[1], BSize, otherPlayer);
+    });
+  } else if (!positionInCorner(x, y, BSize, playerType)) {
+    /** if outside self corner, must always be outside self corner */
+    retPositions = retPositions.filter((pos) => {
+      return !(positionInCorner(pos[0], pos[1], BSize, playerType));
+    });
+  }
 
   return retPositions;
 }
@@ -74,7 +74,7 @@ function positionInCorner(x, y, BSize, playerType) {
 
 function utilityFunction(board) {
   const BSize = board.length;
-  
+
   function F(playerType) {
     const otherPlayer = (3 - playerType);
     let retValue = 0;
@@ -115,11 +115,11 @@ function generateNextState(state) {
   retNextStates = []
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board.length; j++) {
-      if(board[i][j] != state.player) {
+      if (board[i][j] != state.player) {
         continue;
       }
       nextPositions = findAvailablePositions(i, j, board);
-      nextPositions.forEach (nxt => {
+      nextPositions.forEach(nxt => {
         let tempBoard = new Array(board.length);
         for (let i = 0; i < board.length; i++) {
           tempBoard[i] = new Array(board.length);
@@ -132,7 +132,7 @@ function generateNextState(state) {
         tempBoard[nxt[0]][nxt[1]] = temp;
         let tempState = new GameState(tempBoard, tempBoard.length, 3 - state.player);
         retNextStates.push(tempState);
-      });   
+      });
     }
   }
   return retNextStates;
