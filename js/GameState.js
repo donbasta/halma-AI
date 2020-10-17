@@ -1,12 +1,18 @@
 
-const cnt = [5, 5, 4, 3, 2];
+const CNT = [5, 5, 4, 3, 2];
 
 class GameState {
-  constructor(size) {
-    this.init(size);
+  constructor(board, size, player) {
+    if (board == null) {
+      this.initState(size);
+    } else {
+      this.size = board.length;
+      this.board = board;
+    }    
+    this.player = player;
   }
 
-  init(size) {
+  initState(size) {
     this.size = size;
     this.board = new Array(this.size);
     for (let i = 0; i < this.size; i++) {
@@ -16,7 +22,7 @@ class GameState {
       }
     }
     for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < cnt[i]; j++) {
+      for (let j = 0; j < CNT[i]; j++) {
         this.board[i][j] = 1;
         this.board[this.size - i - 1][this.size - j - 1] = 2;
       }
@@ -24,5 +30,5 @@ class GameState {
   }
 }
 
-let testGame = new GameState(8);
-console.log(testGame.board);
+//let testGame = new GameState(8);
+//console.log(testGame.board);
