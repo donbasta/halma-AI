@@ -8,7 +8,6 @@ function findAvailablePositions(x, y, board) {
   let retPositions = [];
 
   if (board[x][y] == 0) return retPositions;
-  
   let queue = [];
   queue.push([x, y, true]);
 
@@ -46,6 +45,8 @@ function findAvailablePositions(x, y, board) {
       }
     }
   }
+  return retPositions;
+}
 
   return retPositions;
 }
