@@ -1,1 +1,107 @@
-{\rtf1}
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.container {
+    background-color: antiquewhite;
+    width: 1000px;
+    height: 100vh;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.content {
+    margin-top: 20px;
+    width: 800px;
+    background-color: aquamarine;
+    padding: 30px;
+}
+
+#board {
+    width: 640px;
+    height: 640px;
+    margin: auto;
+    background-color: brown;
+    display: grid;
+}
+
+.board-16x16 {
+    grid-template-columns: repeat(16, 40px);
+    grid-template-rows: repeat(16, 40px);
+}
+
+.board-8x8 {
+    grid-template-columns: repeat(8, 80px);
+    grid-template-rows: repeat(8, 80px);
+}
+
+.board-10x10 {
+    grid-template-columns: repeat(10, 64px);
+    grid-template-rows: repeat(10, 64px);
+}
+
+.cell-16x16 {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+.pion-16x16 {
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    background-color: rgb(136, 52, 52);
+}
+
+.cell-8x8 {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+.pion-8x8 {
+    width: 60px;
+    height: 60px;
+    border-radius: 100%;
+    background-color: rgb(136, 52, 52);
+}
+
+.cell-10x10 {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+.pion-10x10 {
+    width: 48px;
+    height: 48px;
+    border-radius: 100%;
+    background-color: rgb(136, 52, 52);
+}
+
+.invert {
+    background-color: rgb(80, 80, 80);
+}
+
+
+.invert-pion {
+    background-color: rgb(48, 167, 131);
+}
