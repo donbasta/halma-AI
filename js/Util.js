@@ -2,12 +2,12 @@
 const INF = 99999999999;
 
 function positionInCorner(x, y, BSize, playerType) {
-  x = BSize - x - 1;
   if (playerType == 2) {
     x = BSize - x - 1;
     y = BSize - y - 1;
   }
-  return (x + y <= 3);
+  if (x == 5 || y == 5) return false;
+  return (x + y <= 5);
 }
 
 function utilityFunction(state) {
