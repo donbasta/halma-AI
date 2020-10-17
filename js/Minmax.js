@@ -1,16 +1,16 @@
 const DEPTH = 3;
 const INF = 1000000000;
 
-//implement the node of the minmax tree
+//implement the node of the minimax tree
 class Node {
   constructor(state) {
     this.state = state;
-    this.minmax = null;
+    this.minimax = null;
     this.children = [];
   }
 }
 
-//create the tree and fill the tree using minmax algo
+//create the tree and fill the tree using minimax algo
 class MinimaxTree {
   constructor(currentState, depth, pruning) {
     this.root = new Node(currentState);
@@ -23,7 +23,7 @@ class MinimaxTree {
 
   expand(node, depth) {
     if (depth == 0) {
-      node.minmax = utilityFunction(node.state.board);
+      node.minimax = utilityFunction(node.state.board);
       return;
     }
 
@@ -41,18 +41,18 @@ class MinimaxTree {
       this.expand(childNode, depth - 1);
       node.children.push(childNode);
       if (node.state.player == 1) {
-        tempValue = Math.max(tempValue, childNode.minmax);
+        tempValue = Math.max(tempValue, childNode.minimax);
       } else if (node.state.player == 2) {
-        tempValue = Math.min(tempValue, childNode.minmax);
+        tempValue = Math.min(tempValue, childNode.minimax);
       }
     }
-    node.minmax = tempValue;
+    node.minimax = tempValue;
   }
 
   //for alpha-beta pruning, not fixed yet
   expandPruning(node, depth, alpha, beta) {
     if (depth == 0) {
-      node.minmax = utilityFunction(node.state.board);
+      node.minimax = utilityFunction(node.state.board);
       return;
     }
 
@@ -70,20 +70,20 @@ class MinimaxTree {
       this.expandPruning(childNode, depth - 1, alpha, beta);
       node.children.push(childNode);
       if (node.state.player == 1) {
-        tempValue = Math.max(tempValue, childNode.minmax);
+        tempValue = Math.max(tempValue, childNode.minimax);
         if (tempValue >= beta) {
           break;
         }
         alpha = Math.max(alpha, tempValue);
       } else if (node.state.player == 2) {
-        tempValue = Math.min(tempValue, childNode.minmax);
+        tempValue = Math.min(tempValue, childNode.minimax);
         if (tempValue <= alpha) {
           break;
         }
         beta = Math.min(beta, tempValue);
       }
     }
-    node.minmax = tempValue;
+    node.minimax = tempValue;
   }
 }
 
@@ -91,7 +91,7 @@ class MinimaxTree {
 class Minimax {
   constructor(state, depth, pruning) {
     this.tree = new MinimaxTree(state, depth, pruning);
-    this.value = this.tree.root.minmax;
+    this.value = this.tree.root.minimax;
     this.neighbors = generateNextState(state);
     this.player = state.player;
   }
@@ -99,7 +99,7 @@ class Minimax {
   getMoveBest() {
     let ret;
     this.tree.root.children.forEach (neighbor => {
-      if (neighbor.minmax == this.value) {
+      if (neighbor.minimax == this.value) {
         ret = neighbor.state;
       }
     });
