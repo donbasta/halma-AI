@@ -213,6 +213,7 @@ const moveToCell = (mat, siz, fromx, fromy, x, y) => {
           node.remove()
       })
   }
+}
 // returns whether game is over or not (0 -> not over, 1 -> player one win, 2 -> player two win)
 function terminalState(state) {
   const board = state.board;
@@ -232,6 +233,27 @@ function terminalState(state) {
       return i + 1;
   }
   return 0;
+}
+
+// returns the position of a cell before and after a click by comparing 2 game states
+function compareGameState(stateBefore, stateAfter) {
+  const boardBefore = stateBefore.board;
+  const boardAfter = stateAfter.board;
+  const BSize = boardAfter.length;
+  let xBef = null; let yBef = null;
+  let xAf = null; let yAf = null;
+  for (let i = 0; i < BSize; i++) {
+    for (let j = 0; j < BSize; j++) {
+      if (boardBefore[i][j] !== boardAfter[i][j]) {
+        if (boardAfter[i][j] === 0) {
+          xBef = i; yBef = j;
+        } else if (boardBefore[i][j] === 0) {
+          xAf = i; yAf = j;
+        }
+      }
+    }
+  }
+  return [[xBef, yBef], [xAf, yAf]];
 }
 
 // For Debugging Purposes
