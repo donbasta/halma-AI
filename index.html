@@ -168,7 +168,7 @@
                             cell.appendChild(overlay)
 
                             const availablePos = findAvailablePositions(i, j, matrix)
-                            availablePos.map((value) => {
+                            availablePos.forEach((value) => {
                                 clickmat[value[0]][value[1]] = 2
 
                                 let curCell = getCell(value[0], value[1])
