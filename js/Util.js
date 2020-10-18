@@ -59,6 +59,8 @@ function findAvailablePositions(x, y, board) {
       return !(positionInCorner(pos[0], pos[1], BSize, playerType));
     });
   }
+  return retPositions;
+}
 
 function positionInCorner(x, y, BSize, playerType) {
   if (playerType == 2) {
