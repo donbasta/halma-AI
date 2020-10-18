@@ -8,6 +8,43 @@
     <link rel="stylesheet" href="style/style.css">
 </head>
 <body>
+    <div class="select-game-modal">
+        <div class="select-game">
+            <h3>Game Mode</h3>
+            <form class="radio-container">
+                <h4>B - Size : </h4>
+                <label for="b-8">8</label>
+                <input type="radio" name="b-size" id="b-8" value="8" checked="checked">
+                <label for="b-10">10</label>
+                <input type="radio" name="b-size" id="b-10" value="10">
+                <label for="b-16">16</label>
+                <input type="radio" name="b-size" id="b-16" value="16">
+            </form>
+            <form class="radio-container">
+                <h4>T - Limit (in seconds): </h4>
+                <input type="text" name="t-limit" id="t-limit" value="10">
+            </form>
+            <form class="radio-container">
+                <h4>Select Player Color : </h4>
+                <label for="h-merah">Merah</label>
+                <input type="radio" name="h-player" id="h-merah" value="1" checked="checked">
+                <label for="h-hijau">Hijau</label>
+                <input type="radio" name="h-player" id="h-hijau" value="0">
+                <label for="h-hijau">No Player</label>
+                <input type="radio" name="h-player" id="h-hijau" value="-1">
+            </form>
+            <form class="radio-container">
+                <h4>Select Bot Type : </h4>
+                <label for="h-merah">Minimax</label>
+                <input type="radio" name="bot-type" id="minimax" value="minimax" checked="checked">
+                <label for="h-hijau">Minimax + Local Search</label>
+                <input type="radio" name="bot-type" id="minimax-local-search" value="minimax-local-search">
+            </form>
+            <form class="radio-container play">
+                <input type="button" id="play-button" value="Play">
+            </form>
+        </div>
+    </div>
     <div class="container">
         <div class="title">
             <h1>Halma</h1>
@@ -20,114 +57,45 @@
     </div>
 
     <script src="js/Util.js"></script>
-
+    <script src="js/GameState.js"></script>
+    <script src="js/Minmax.js"></script>
     <script>
+        var forms = null
+        var bSize = null
+        var tLImit = null
+        var playerTurn = null
 
-        /* Initial Matrix */
-        let matrix = [
-            [1,1,1,0,0,0,0,0],
-            [1,1,0,0,0,0,0,0],
-            [1,1,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,2,2,2],
-            [0,0,0,0,0,2,2,2],
-        ]
+        // /* Initial Matrix */
+        // let matrix = [
+        //     [1,1,1,0,0,0,0,0],
+        //     [1,1,0,0,0,0,0,0],
+        //     [1,1,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,2,2,2],
+        //     [0,0,0,0,0,2,2,2],
+        // ]
 
-        /* Matrix untuk state click */
-        let clickState = [
-            [1,1,1,0,0,0,0,0],
-            [1,1,0,0,0,0,0,0],
-            [1,1,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,1,1,1],
-            [0,0,0,0,0,1,1,1],
-        ]
+        // /* Matrix untuk state click */
+        // let clickState = [
+        //     [1,1,1,0,0,0,0,0],
+        //     [1,1,0,0,0,0,0,0],
+        //     [1,1,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,0,0,0],
+        //     [0,0,0,0,0,1,1,1],
+        //     [0,0,0,0,0,1,1,1],
+        // ]
+        let gameState = null
+        let userClicked = null
+        let turn = 1
 
         /* Selected Cell */
-        let selectedCell = null
+        // let selectedCell = null
 
-        const createCell = (value, invert, siz) => {
-            const cell = document.createElement("div") 
-            const pion = document.createElement("div")
-            if(siz == 8) {
-                cell.setAttribute("class", "cell-8x8")
-                if(value == 1) {
-                    pion.setAttribute("class", "pion-8x8")
-                } else if (value == 2) {
-                    pion.setAttribute("class", "pion-8x8 invert-pion")
-                }
-            } else if(siz == 10) {
-                cell.setAttribute("class", "cell-10x10")
-                if(value == 1) {
-                    pion.setAttribute("class", "pion-10x10")
-                } else if (value == 2) {
-                    pion.setAttribute("class", "pion-10x10 invert-pion")
-                }
-            } else {
-                cell.setAttribute("class", "cell-16x16")
-                if(value == 1) {
-                    pion.setAttribute("class", "pion-16x16")
-                } else if (value == 2) {
-                    pion.setAttribute("class", "pion-16x16 invert-pion")
-                }
-            }
-            if(value != 0) {
-                cell.appendChild(pion)
-            }
-            if(invert) {
-                cell.classList.add("invert")
-            }
-            return cell
-        }
-
-        const getCell = (x, y) => {
-            const id = "id_" + x.toString(10) + "_" + y.toString(10)
-
-            return document.getElementById(id)
-        }
-
-        const moveToCell = (mat, siz, fromx, fromy, x, y) => {
-            if(!(fromx == x && fromy == y)) {
-                const curCell = getCell(fromx, fromy)
-                const toCell = getCell(x, y) 
-
-                const value = mat[fromx][fromy]
-
-                const pion = document.createElement("div")
-                if(siz == 8) {
-                    if(value == 1) {
-                        pion.setAttribute("class", "pion-8x8")
-                    } else if (value == 2) {
-                        pion.setAttribute("class", "pion-8x8 invert-pion")
-                    }
-                } else if(siz == 10) {
-                    if(value == 1) {
-                        pion.setAttribute("class", "pion-10x10")
-                    } else if (value == 2) {
-                        pion.setAttribute("class", "pion-10x10 invert-pion")
-                    }
-                } else {
-                    if(value == 1) {
-                        pion.setAttribute("class", "pion-16x16")
-                    } else if (value == 2) {
-                        pion.setAttribute("class", "pion-16x16 invert-pion")
-                    }
-                }
-
-                toCell.appendChild(pion)
-                curCell.innerHTML = ""
-            } else {
-                document.querySelectorAll('.selected-cell').forEach((node) => {
-                    node.remove()
-                })
-            }
-        }
-
-        const createBoard = (mat, clickmat, siz) => {
+        const createBoard = (mat, clickmat, selectedCell, gameState, siz, playerTurn, botType) => {
             const board = document.getElementById("board")
             if(siz == 8) {
                 board.classList.add("board-8x8")
@@ -153,7 +121,7 @@
 
                     invert = !invert
                     
-                    cell.addEventListener("click", (e) => {
+                    cell.addEventListener("click", async (e) => {
                         if(clickmat[i][j] == 1) {
                             for(let a = 0; a < siz; a++) {
                                 for(let b = 0; b < siz; b++) {
@@ -167,7 +135,7 @@
                             overlay.setAttribute("class", "selected-cell")
                             cell.appendChild(overlay)
 
-                            const availablePos = findAvailablePositions(i, j, matrix)
+                            const availablePos = findAvailablePositions(i, j, mat)
                             availablePos.forEach((value) => {
                                 clickmat[value[0]][value[1]] = 2
 
@@ -187,6 +155,19 @@
                             }
 
                             selectedCell = null 
+                            if (clickmat[i][j] !== 3) {
+                                // console.log(clickmat[i][j])
+                                await new Promise(r => setTimeout(r, 200))
+                                if (turn === 1) {
+                                    gameState.player = 2 - turn
+                                    if (playerTurn === -1) {
+                                        botMove(gameState, "minimax-local-search")
+                                    } else {
+                                        botMove(gameState, botType)
+                                    }
+                                }
+                                turn = (turn + 1) % 2
+                            }
                             for(let a = 0; a < siz; a++) {
                                 for(let b = 0; b < siz; b++) {
                                     if(mat[a][b] > 0) {
@@ -198,13 +179,65 @@
                             document.querySelectorAll('.avail').forEach((node) => {
                                 node.remove()
                             })
+                            
+                            // await new Promise(r => setTimeout(r, 1000))
                         }
+                        userClicked = true;
                     })
                 }
             }
         }
+        playButton = document.getElementById("play-button").addEventListener('click', () => {
+            forms = document.getElementsByClassName("radio-container")
+            bSize = Array.from(forms[0].childNodes).filter((child) => child.checked)[0].value
+            tLimit = parseInt(document.getElementById("t-limit").value)
+            playerTurn = parseInt(Array.from(forms[2]).filter((child) => child.checked)[0].value)
+            botType = Array.from(forms[3]).filter((child) => child.checked)[0].value
+            // console.log(playerTurn)
+            botTurn = playerTurn === 2 || playerTurn === -1 ? 1 : 2
+            gameState = new GameState(null, bSize, botTurn) 
+            // botMove(gameState, botType)
+            createBoard(gameState.board, gameState.clickState, gameState.selectedCell, gameState, bSize, playerTurn, botType)
+            if (playerTurn === 0) {
+                turn = 0
+                botMove(gameState, botType)
+            }
+            if (playerTurn === -1) {
+                botMove(gameState, "minimax")
+            }
+            // // play(tLimit, playerTurn)
+            // while (terminalState(gameState) === 0) {
+            //     if (playerTurn === 1 || playerTurn === -1) {
+            //         gameState.player = 2;
+            //         if (playerTurn === 1) {
+            //             while (!userClicked) {
+            //                 // busy waiting
+            //             }
+            //             userClicked = false;
+            //             botMove(gameState, botType)
+            //         }
+            //         if (playerTurn === -1) {
+            //             botMove(gameState, "minimax")
+            //         }
+            //     }
+            //     if (playerTurn === 2 || playerTurn === -1) {
+            //         gameState.player = 1;
+            //         if (playerTurn === 2) {
+            //             while (!userClicked) {
+            //                 // busy waiting
+            //             }
+            //             userClicked = false;
+            //             botMove(gameState, botType)
+            //         }
+            //         if (playerTurn === -1) {
+            //             botMove(gameState, "minimax-local-search")
+            //         }
+            //     }
+            // }
+            console.log('udah')
+            document.getElementsByClassName("select-game-modal")[0].setAttribute("style", "display: none;")
+        })
 
-        createBoard(matrix, clickState, 8)
     </script>
 </body>
 

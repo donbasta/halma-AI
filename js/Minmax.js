@@ -1,5 +1,5 @@
 const DEPTH = 3;
-const INF = 1000000000;
+// const INF = 1000000000;
 
 //implement the node of the minimax tree
 class Node {
@@ -151,6 +151,31 @@ class Minimax {
     }
     console.log("Timeout");
   }
+}
+
+function botMove(gameState, botType) {
+  let botMoveMinimaxPruning = new Minimax(gameState, 3, true)
+  let bestMove = null
+  if (botType === "minimax") {
+      botMoveMinimaxPruning.getMoveBest()
+      bestMove = botMoveMinimaxPruning.nextMoveBest
+  }
+  if (botType === "minimax-local-search") {
+      botMoveMinimaxPruning.getMoveRandom()
+      bestMove = botMoveMinimaxPruning.nextMoveRandom
+  }
+  // console.log(gameState)
+  // console.log(bestMove.board)
+  let compareResult = compareGameState(gameState, bestMove)
+  setTimeout(() => {
+      let sourcePosToClick = getCell(compareResult[0][0], compareResult[0][1])
+      sourcePosToClick.click()
+      console.log('tetot')
+      setTimeout(() => {
+          let targetPosToClick = getCell(compareResult[1][0], compareResult[1][1])
+          targetPosToClick.click()
+      }, 10)
+  }, 10)
 }
 
 //----------------------------------------------------------------------------------------

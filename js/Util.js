@@ -138,6 +138,82 @@ function generateNextState(state) {
   return retNextStates;
 }
 
+const createCell = (value, invert, siz) => {
+  const cell = document.createElement("div") 
+  const pion = document.createElement("div")
+  if(siz == 8) {
+      cell.setAttribute("class", "cell-8x8")
+      if(value == 1) {
+          pion.setAttribute("class", "pion-8x8")
+      } else if (value == 2) {
+          pion.setAttribute("class", "pion-8x8 invert-pion")
+      }
+  } else if(siz == 10) {
+      cell.setAttribute("class", "cell-10x10")
+      if(value == 1) {
+          pion.setAttribute("class", "pion-10x10")
+      } else if (value == 2) {
+          pion.setAttribute("class", "pion-10x10 invert-pion")
+      }
+  } else {
+      cell.setAttribute("class", "cell-16x16")
+      if(value == 1) {
+          pion.setAttribute("class", "pion-16x16")
+      } else if (value == 2) {
+          pion.setAttribute("class", "pion-16x16 invert-pion")
+      }
+  }
+  if(value != 0) {
+      cell.appendChild(pion)
+  }
+  if(invert) {
+      cell.classList.add("invert")
+  }
+  return cell
+}
+
+const getCell = (x, y) => {
+  const id = "id_" + x.toString(10) + "_" + y.toString(10)
+
+  return document.getElementById(id)
+}
+
+const moveToCell = (mat, siz, fromx, fromy, x, y) => {
+  if(!(fromx == x && fromy == y)) {
+      const curCell = getCell(fromx, fromy)
+      const toCell = getCell(x, y) 
+
+      const value = mat[fromx][fromy]
+
+      const pion = document.createElement("div")
+      if(siz == 8) {
+          if(value == 1) {
+              pion.setAttribute("class", "pion-8x8")
+          } else if (value == 2) {
+              pion.setAttribute("class", "pion-8x8 invert-pion")
+          }
+      } else if(siz == 10) {
+          if(value == 1) {
+              pion.setAttribute("class", "pion-10x10")
+          } else if (value == 2) {
+              pion.setAttribute("class", "pion-10x10 invert-pion")
+          }
+      } else {
+          if(value == 1) {
+              pion.setAttribute("class", "pion-16x16")
+          } else if (value == 2) {
+              pion.setAttribute("class", "pion-16x16 invert-pion")
+          }
+      }
+
+      toCell.appendChild(pion)
+      curCell.innerHTML = ""
+  } else {
+      document.querySelectorAll('.selected-cell').forEach((node) => {
+          node.remove()
+      })
+  }
+}
 // returns whether game is over or not (0 -> not over, 1 -> player one win, 2 -> player two win)
 function terminalState(state) {
   const board = state.board;
@@ -157,6 +233,27 @@ function terminalState(state) {
       return i + 1;
   }
   return 0;
+}
+
+// returns the position of a cell before and after a click by comparing 2 game states
+function compareGameState(stateBefore, stateAfter) {
+  const boardBefore = stateBefore.board;
+  const boardAfter = stateAfter.board;
+  const BSize = boardAfter.length;
+  let xBef = null; let yBef = null;
+  let xAf = null; let yAf = null;
+  for (let i = 0; i < BSize; i++) {
+    for (let j = 0; j < BSize; j++) {
+      if (boardBefore[i][j] !== boardAfter[i][j]) {
+        if (boardAfter[i][j] === 0) {
+          xBef = i; yBef = j;
+        } else if (boardBefore[i][j] === 0) {
+          xAf = i; yAf = j;
+        }
+      }
+    }
+  }
+  return [[xBef, yBef], [xAf, yAf]];
 }
 
 // For Debugging Purposes

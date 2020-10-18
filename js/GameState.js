@@ -15,16 +15,22 @@ class GameState {
   initState(size) {
     this.size = size;
     this.board = new Array(this.size);
+    this.clickState = new Array(this.size);
+    this.selectedCell = null;
     for (let i = 0; i < this.size; i++) {
       this.board[i] = new Array(this.size);
+      this.clickState[i] = new Array(this.size);
       for(let j = 0; j < this.size; j++) {
         this.board[i][j] = 0;
+        this.clickState[i][j] = 0;
       }
     }
     for (let i = 0; i < 5; i++) {
       for (let j = 0; j < CNT[i]; j++) {
         this.board[i][j] = 1;
         this.board[this.size - i - 1][this.size - j - 1] = 2;
+        this.clickState[i][j] = 1;
+        this.clickState[this.size - i - 1][this.size - j - 1] = 1;
       }
     }
   }
