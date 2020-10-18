@@ -4,7 +4,7 @@ class SimulatedAnnealing {
 
   constructor(currentState) {
     this.state = currentState;
-    this.player = this.state.player;
+    this.player = this.state.player; // 1 = cari max, 2 = cari min
     this.value = util.utilityFunction(this.state);
     this.neighbors = util.generateNextState(this.state);
   }
