@@ -2,6 +2,7 @@
 const INF = 99999999999;
 const DX = [0, 0, 1, -1, 1, 1, -1, -1];
 const DY = [1, -1, 0, 0, -1, 1, 1, -1];
+const NUMBER_OF_PAWN = 19;
 
 function findAvailablePositions(x, y, board) {
   const BSize = board.length;
@@ -137,16 +138,40 @@ function generateNextState(state) {
   return retNextStates;
 }
 
+// returns whether game is over or not (0 -> not over, 1 -> player one win, 2 -> player two win)
+function terminalState(state) {
+  const board = state.board;
+  const BSize = board.length;
+  let cntInCorner = [0, 0];
+  for (let i = 0; i < BSize; i++) {
+    for (let j = 0; j < BSize; j++) {
+      if (board[i][j] == 0) continue;
+      const curPlayer = board[i][j];
+      const otherPlayer = 3 - curPlayer;
+      if (positionInCorner(i, j, BSize, otherPlayer))
+        cntInCorner[curPlayer - 1]++;
+    }
+  }
+  for (let i = 0; i < 2; i++) {
+    if (cntInCorner[i] == NUMBER_OF_PAWN)
+      return i + 1;
+  }
+  return 0;
+}
+
 // For Debugging Purposes
-// let board = [
-// 	[0, 0, 0, 0, 0, 1, 0, 0],
-// 	[0, 0, 0, 0, 0, 0, 0, 0],
-// 	[0, 0, 0, 0, 0, 0, 0, 0],
-// 	[0, 0, 0, 0, 0, 0, 0, 0],
-// 	[0, 0, 0, 0, 0, 0, 0, 0],
-// 	[0, 0, 0, 0, 0, 0, 0, 0],
-// 	[0, 0, 0, 0, 0, 0, 0, 0],
-// 	[0, 0, 0, 0, 0, 0, 0, 0]
-// ];
+// let state = {
+//   board: [
+//     [2, 2, 0, 0, 0, 0, 0, 0],
+//     [0, 0, 0, 0, 0, 0, 0, 0],
+//     [0, 0, 0, 0, 0, 0, 0, 0],
+//     [0, 0, 0, 0, 0, 0, 1, 1],
+//     [0, 0, 0, 0, 0, 1, 1, 1],
+//     [0, 0, 0, 0, 1, 1, 1, 1],
+//     [0, 0, 0, 1, 1, 1, 1, 1],
+//     [0, 0, 0, 1, 1, 1, 1, 1]
+//   ]
+// };
 // console.log(utilityFunction(board));
 // console.log(findAvailablePositions(0, 5, board).sort());
+// console.log(terminalState(state));
