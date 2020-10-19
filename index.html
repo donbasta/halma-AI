@@ -13,12 +13,14 @@
             <h3>Game Mode</h3>
             <form class="radio-container">
                 <h4>B - Size : </h4>
-                <label for="b-8">8</label>
-                <input type="radio" name="b-size" id="b-8" value="8" checked="checked">
-                <label for="b-10">10</label>
-                <input type="radio" name="b-size" id="b-10" value="10">
-                <label for="b-16">16</label>
-                <input type="radio" name="b-size" id="b-16" value="16">
+                <div id="size-selection">
+                    <input type="radio" name="b-size" id="b-8" value="8" checked="checked">
+                    <label for="b-8">8</label>
+                    <input type="radio" name="b-size" id="b-10" value="10">
+                    <label for="b-10">10</label>
+                    <input type="radio" name="b-size" id="b-16" value="16">
+                    <label for="b-16">16</label>
+                </div>
             </form>
             <form class="radio-container">
                 <h4>T - Limit (in seconds): </h4>
@@ -26,19 +28,23 @@
             </form>
             <form class="radio-container">
                 <h4>Select Player Color : </h4>
-                <label for="h-merah">Merah</label>
-                <input type="radio" name="h-player" id="h-merah" value="1" checked="checked">
-                <label for="h-hijau">Hijau</label>
-                <input type="radio" name="h-player" id="h-hijau" value="0">
-                <label for="h-hijau">No Player</label>
-                <input type="radio" name="h-player" id="h-no-player" value="-1">
+                <div id="player-selection">
+                    <input type="radio" name="h-player" id="h-merah" value="1" checked="checked">
+                    <label for="h-merah">Merah</label>
+                    <input type="radio" name="h-player" id="h-hijau" value="0">
+                    <label for="h-hijau">Hijau</label>
+                    <input type="radio" name="h-player" id="h-no-player" value="-1">
+                    <label for="h-hijau">No Player</label>
+                </div>
             </form>
             <form class="radio-container">
                 <h4>Select Bot Type : </h4>
-                <label for="h-merah">Minimax</label>
-                <input type="radio" name="bot-type" id="minimax" value="minimax" checked="checked">
-                <label for="h-hijau">Minimax + Local Search</label>
-                <input type="radio" name="bot-type" id="minimax-local-search" value="minimax-local-search">
+                <div id="bot-selection">
+                    <input type="radio" name="bot-type" id="minimax" value="minimax" checked="checked">
+                    <label for="h-merah">Minimax</label>
+                    <input type="radio" name="bot-type" id="minimax-local-search" value="minimax-local-search">
+                    <label for="h-hijau">Minimax + Local Search</label>
+                </div>
             </form>
             <form class="radio-container play">
                 <input type="button" id="play-button" value="Play">
@@ -216,10 +222,10 @@
         }
         playButton = document.getElementById("play-button").addEventListener('click', () => {
             forms = document.getElementsByClassName("radio-container")
-            bSize = Array.from(forms[0].childNodes).filter((child) => child.checked)[0].value
+            bSize = Array.from(document.getElementById("size-selection").childNodes).filter((child) => child.checked)[0].value
             tLimit = parseInt(document.getElementById("t-limit").value) * 1000
-            playerMode = parseInt(Array.from(forms[2]).filter((child) => child.checked)[0].value)
-            botType = Array.from(forms[3]).filter((child) => child.checked)[0].value
+            playerMode = parseInt(Array.from(document.getElementById("player-selection").childNodes).filter((child) => child.checked)[0].value)
+            botType = Array.from(document.getElementById("bot-selection").childNodes).filter((child) => child.checked)[0].value
             // console.log(playerMode)
             botTurn = playerMode === 0 || playerMode === -1 ? 1 : 2
             console.log(botTurn)    

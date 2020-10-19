@@ -94,6 +94,7 @@ class Minimax {
     this.value = this.tree.root.minimax;
     this.neighbors = generateNextState(state);
     this.player = state.player;
+    this.state = state;
   }
 
   getMoveBest() {
@@ -116,7 +117,7 @@ class Minimax {
       let randomNeighbor = this.neighbors[randomPosition];
       let nextValue = utilityFunction(randomNeighbor, this.player);
       if (this.player == 1) {
-        if (nextValue >= curValue) {
+        if (nextValue >= utilityFunction(this.state, this.player)) {
           this.nextMoveRandom = randomNeighbor;
           return;
         } else {
