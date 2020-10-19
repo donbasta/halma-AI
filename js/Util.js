@@ -72,8 +72,23 @@ function positionInCorner(x, y, BSize, playerType) {
   return (x + y <= 5);
 }
 
-function utilityFunction(board) {
+function utilityFunction(board, PType) {
   const BSize = board.length;
+
+  function count(playerType) {
+    let ret = 0;
+    let otherPlayer = 3 - playerType;
+    for (let i = 0; i < BSize; i++) {
+      for (let j = 0; j < BSize; j++) {
+        if (board[i][j] == playerType) {
+          if (positionInCorner(i, j, BSize, otherPlayer)) {
+            ret++;
+          }
+        }
+      }
+    }
+    return ret;
+  }
 
   function F(playerType) {
     const otherPlayer = (3 - playerType);
@@ -101,10 +116,18 @@ function utilityFunction(board) {
         const distance = Math.abs(pawn[0] - target[0]) + Math.abs(pawn[1] - target[1]);
         curValue = Math.min(curValue, distance);
       }
-      retValue += curValue;
+      retValue += curValue * curValue;
     }
 
     return retValue;
+  }
+
+  if(count(2) == NUMBER_OF_PAWN) {
+    return -INF;
+  }
+
+  if(count(1) == NUMBER_OF_PAWN) {
+    return INF;
   }
 
   return F(2) - F(1);

@@ -5,7 +5,7 @@ class SimulatedAnnealing {
   constructor(currentState) {
     this.state = currentState;
     this.player = this.state.player; // 1 = cari max, 2 = cari min
-    this.value = util.utilityFunction(this.state);
+    this.value = util.utilityFunction(this.state, this.player);
     this.neighbors = util.generateNextState(this.state);
   }
 
@@ -16,7 +16,7 @@ class SimulatedAnnealing {
     while(attempt < MAX_ATTEMPT) {
       let randomPosition = Math.floor(Math.random() * this.neighbors.length);
       let randomNeighbor = this.neighbors[randomPosition];
-      let nextValue = util.utilityFunction(randomNeighbor);
+      let nextValue = util.utilityFunction(randomNeighbor, this.player);
       if (this.player == 1) {
         if (nextValue >= curValue) {
           this.nextMove = randomNeighbor;

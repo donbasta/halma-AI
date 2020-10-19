@@ -31,7 +31,7 @@
                 <label for="h-hijau">Hijau</label>
                 <input type="radio" name="h-player" id="h-hijau" value="0">
                 <label for="h-hijau">No Player</label>
-                <input type="radio" name="h-player" id="h-hijau" value="-1">
+                <input type="radio" name="h-player" id="h-no-player" value="-1">
             </form>
             <form class="radio-container">
                 <h4>Select Bot Type : </h4>
@@ -43,6 +43,13 @@
             <form class="radio-container play">
                 <input type="button" id="play-button" value="Play">
             </form>
+        </div>
+    </div>
+    <div class="select-game-modal" style="z-index: 999">
+        <div class="select-game">
+            <h3>CONGRATULATIONS</h3>
+            <p id="player-wins">Player wins!</p>
+            <p id="bot-move-count">Bot Move Count : </p>
         </div>
     </div>
     <div class="container">
@@ -63,7 +70,7 @@
         var forms = null
         var bSize = null
         var tLImit = null
-        var playerTurn = null
+        var playerMode = null
 
         // /* Initial Matrix */
         // let matrix = [
@@ -91,11 +98,12 @@
         let gameState = null
         let userClicked = null
         let turn = 1
+        let botMoveCount = 0
 
         /* Selected Cell */
         // let selectedCell = null
 
-        const createBoard = (mat, clickmat, selectedCell, gameState, siz, playerTurn, botType) => {
+        const createBoard = (mat, clickmat, selectedCell, gameState, siz, playerMode, botType) => {
             const board = document.getElementById("board")
             if(siz == 8) {
                 board.classList.add("board-8x8")
@@ -157,16 +165,46 @@
                             selectedCell = null 
                             if (clickmat[i][j] !== 3) {
                                 // console.log(clickmat[i][j])
-                                await new Promise(r => setTimeout(r, 200))
-                                if (turn === 1) {
-                                    gameState.player = 2 - turn
-                                    if (playerTurn === -1) {
-                                        botMove(gameState, "minimax-local-search")
+                                // cek state terminal
+                                let terminalStatus = terminalState(gameState)
+                                console.log("botMoveCount : " + botMoveCount)
+                                if(terminalStatus == 1) {
+                                    document.getElementsByClassName("select-game-modal")[1].setAttribute("style", "display: block; z-index: 999;")
+                                    document.getElementById("player-wins").innerHTML = "Player one wins!"
+                                    document.getElementById("bot-move-count").innerHTML = "Bot move count: " + botMoveCount
+                                } else if(terminalStatus == 2) {
+                                    document.getElementsByClassName("select-game-modal")[1].setAttribute("style", "display: block; z-index: 999;")
+                                    document.getElementById("player-wins").innerHTML = "Player two wins!"
+                                    document.getElementById("bot-move-count").innerHTML = "Bot move count: " + botMoveCount
+                                } else {
+                                    // kalo tidak terminal lanjut
+                                    await new Promise(r => setTimeout(r, 200))
+                                    if (playerMode !== -1) {
+                                        if (turn === 1) {
+                                            botMove(gameState, botType)
+                                            botMoveCount++
+                                        }
                                     } else {
-                                        botMove(gameState, botType)
+                                        gameState.player = turn + 1
+                                        if (turn === 1) {
+                                            botMove(gameState, "minimax")
+                                            botMoveCount++
+                                        } else {
+                                            botMove(gameState, "minimax-local-search")
+                                            botMoveCount++
+                                        }
                                     }
+                                    // if (turn === 1) {
+                                    //     if (playerMode === -1) {
+                                    //         botMove(gameState, "minimax-local-search")
+                                    //         gameState.player = 2 - turn
+                                    //     } else {
+                                    //         botMove(gameState, botType)
+                                    //     }
+                                    // }
+                                    turn = (turn + 1) % 2
+
                                 }
-                                turn = (turn + 1) % 2
                             }
                             for(let a = 0; a < siz; a++) {
                                 for(let b = 0; b < siz; b++) {
@@ -182,7 +220,8 @@
                             
                             // await new Promise(r => setTimeout(r, 1000))
                         }
-                        userClicked = true;
+
+
                     })
                 }
             }
@@ -191,51 +230,24 @@
             forms = document.getElementsByClassName("radio-container")
             bSize = Array.from(forms[0].childNodes).filter((child) => child.checked)[0].value
             tLimit = parseInt(document.getElementById("t-limit").value)
-            playerTurn = parseInt(Array.from(forms[2]).filter((child) => child.checked)[0].value)
+            playerMode = parseInt(Array.from(forms[2]).filter((child) => child.checked)[0].value)
             botType = Array.from(forms[3]).filter((child) => child.checked)[0].value
-            // console.log(playerTurn)
-            botTurn = playerTurn === 2 || playerTurn === -1 ? 1 : 2
-            gameState = new GameState(null, bSize, botTurn) 
+            // console.log(playerMode)
+            botTurn = playerMode === 0 || playerMode === -1 ? 1 : 2
+            console.log(botTurn)    
+            gameState = new GameState(null, bSize, botTurn)
             // botMove(gameState, botType)
-            createBoard(gameState.board, gameState.clickState, gameState.selectedCell, gameState, bSize, playerTurn, botType)
-            if (playerTurn === 0) {
+            createBoard(gameState.board, gameState.clickState, gameState.selectedCell, gameState, bSize, playerMode, botType)
+            if (playerMode === 0) {
                 turn = 0
                 botMove(gameState, botType)
             }
-            if (playerTurn === -1) {
+            if (playerMode === -1) {
                 botMove(gameState, "minimax")
             }
-            // // play(tLimit, playerTurn)
-            // while (terminalState(gameState) === 0) {
-            //     if (playerTurn === 1 || playerTurn === -1) {
-            //         gameState.player = 2;
-            //         if (playerTurn === 1) {
-            //             while (!userClicked) {
-            //                 // busy waiting
-            //             }
-            //             userClicked = false;
-            //             botMove(gameState, botType)
-            //         }
-            //         if (playerTurn === -1) {
-            //             botMove(gameState, "minimax")
-            //         }
-            //     }
-            //     if (playerTurn === 2 || playerTurn === -1) {
-            //         gameState.player = 1;
-            //         if (playerTurn === 2) {
-            //             while (!userClicked) {
-            //                 // busy waiting
-            //             }
-            //             userClicked = false;
-            //             botMove(gameState, botType)
-            //         }
-            //         if (playerTurn === -1) {
-            //             botMove(gameState, "minimax-local-search")
-            //         }
-            //     }
-            // }
-            console.log('udah')
+            // console.log('udah')
             document.getElementsByClassName("select-game-modal")[0].setAttribute("style", "display: none;")
+            document.getElementsByClassName("select-game-modal")[1].setAttribute("style", "display: none;")
         })
 
     </script>
