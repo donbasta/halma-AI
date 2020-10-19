@@ -23,14 +23,14 @@ class MinimaxTree {
 
   expand(node, depth) {
     if (depth == 0) {
-      node.minimax = utilityFunction(node.state.board);
+      node.minimax = utilityFunction(node.state.board, node.state.player);
       return;
     }
 
     let tempValue;
-    if (node.state.player == 1) {
+    if (node.state.player === 1) {
       tempValue = -INF;
-    } else if (node.state.player == 2) {
+    } else if (node.state.player === 2) {
       tempValue = INF;
     }
 
@@ -52,7 +52,7 @@ class MinimaxTree {
   //for alpha-beta pruning, not fixed yet
   expandPruning(node, depth, alpha, beta) {
     if (depth == 0) {
-      node.minimax = utilityFunction(node.state.board);
+      node.minimax = utilityFunction(node.state.board, node.state.player);
       return;
     }
 
@@ -94,6 +94,8 @@ class Minimax {
     this.value = this.tree.root.minimax;
     this.neighbors = generateNextState(state);
     this.player = state.player;
+    this.state = state;
+    this.utilValue = utilityFunction(this.state.board, this.player);
   }
 
   getMoveBest() {
@@ -110,17 +112,16 @@ class Minimax {
     const MAX_ATTEMPT = 100;
     let curValue = this.value;
     let attempt = 0;
-    //let found = false;
     while(attempt < MAX_ATTEMPT) {
       let randomPosition = Math.floor(Math.random() * this.neighbors.length);
       let randomNeighbor = this.neighbors[randomPosition];
-      let nextValue = utilityFunction(randomNeighbor);
+      let nextValue = utilityFunction(randomNeighbor.board, this.player);
       if (this.player == 1) {
-        if (nextValue >= curValue) {
+        if (nextValue >= this.utilValue) {
           this.nextMoveRandom = randomNeighbor;
           return;
         } else {
-          let delta = Math.abs(curValue - nextValue);
+          let delta = Math.abs(this.utilValue - nextValue);
           let temp = 10;
           let prob = 1.0 / Math.pow(Math.E, delta / temp);
           let random = Math.random();
@@ -132,11 +133,11 @@ class Minimax {
           }
         }
       } else if (this.player == 2) {
-        if (nextValue <= curValue) {
+        if (nextValue <= this.utilValue) {
           this.nextMoveRandom = randomNeighbor;
           return;
         } else {
-          let delta = Math.abs(curValue - nextValue);
+          let delta = Math.abs(this.utilValue - nextValue);
           let temp = 10;
           let prob = 1.0 / Math.pow(Math.E, delta / temp);
           let random = Math.random();
@@ -154,7 +155,8 @@ class Minimax {
 }
 
 function botMove(gameState, botType) {
-  let botMoveMinimaxPruning = new Minimax(gameState, 3, true)
+  // console.log(gameState.player)
+  let botMoveMinimaxPruning = new Minimax(gameState, 2, true)
   let bestMove = null
   if (botType === "minimax") {
       botMoveMinimaxPruning.getMoveBest()
@@ -163,14 +165,19 @@ function botMove(gameState, botType) {
   if (botType === "minimax-local-search") {
       botMoveMinimaxPruning.getMoveRandom()
       bestMove = botMoveMinimaxPruning.nextMoveRandom
+      if (!bestMove) {
+        botMoveMinimaxPruning.getMoveBest()
+        bestMove = botMoveMinimaxPruning.nextMoveBest
+      }
   }
+  console.log(bestMove)
   // console.log(gameState)
   // console.log(bestMove.board)
   let compareResult = compareGameState(gameState, bestMove)
   setTimeout(() => {
       let sourcePosToClick = getCell(compareResult[0][0], compareResult[0][1])
       sourcePosToClick.click()
-      console.log('tetot')
+      // console.log('tetot')
       setTimeout(() => {
           let targetPosToClick = getCell(compareResult[1][0], compareResult[1][1])
           targetPosToClick.click()
@@ -187,7 +194,7 @@ function botMove(gameState, botType) {
 //   return hrTime[0] * 1000000000 + hrTime[1];
 // }
 
-// let state1 = new GameState(null, 40, 1);
+// let state1 = new GameState(null, 8, 1);
 // let pruneAwal = getNanoSecTime();
 // let botMoveMinimaxPruning = new Minimax(state1, 3, true);
 // botMoveMinimaxPruning.getMoveBest();
