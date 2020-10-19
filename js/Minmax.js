@@ -95,6 +95,7 @@ class Minimax {
     this.neighbors = generateNextState(state);
     this.player = state.player;
     this.state = state;
+    this.utilValue = utilityFunction(this.state.board, this.player);
   }
 
   getMoveBest() {
@@ -111,17 +112,16 @@ class Minimax {
     const MAX_ATTEMPT = 100;
     let curValue = this.value;
     let attempt = 0;
-    //let found = false;
     while(attempt < MAX_ATTEMPT) {
       let randomPosition = Math.floor(Math.random() * this.neighbors.length);
       let randomNeighbor = this.neighbors[randomPosition];
-      let nextValue = utilityFunction(randomNeighbor, this.player);
+      let nextValue = utilityFunction(randomNeighbor.board, this.player);
       if (this.player == 1) {
-        if (nextValue >= utilityFunction(this.state, this.player)) {
+        if (nextValue >= this.utilValue) {
           this.nextMoveRandom = randomNeighbor;
           return;
         } else {
-          let delta = Math.abs(curValue - nextValue);
+          let delta = Math.abs(this.utilValue - nextValue);
           let temp = 10;
           let prob = 1.0 / Math.pow(Math.E, delta / temp);
           let random = Math.random();
@@ -133,11 +133,11 @@ class Minimax {
           }
         }
       } else if (this.player == 2) {
-        if (nextValue <= curValue) {
+        if (nextValue <= this.utilValue) {
           this.nextMoveRandom = randomNeighbor;
           return;
         } else {
-          let delta = Math.abs(curValue - nextValue);
+          let delta = Math.abs(this.utilValue - nextValue);
           let temp = 10;
           let prob = 1.0 / Math.pow(Math.E, delta / temp);
           let random = Math.random();
