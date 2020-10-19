@@ -156,7 +156,7 @@ class Minimax {
 
 function botMove(gameState, botType) {
   // console.log(gameState.player)
-  let botMoveMinimaxPruning = new Minimax(gameState, 3, true)
+  let botMoveMinimaxPruning = new Minimax(gameState, 2, true)
   let bestMove = null
   if (botType === "minimax") {
       botMoveMinimaxPruning.getMoveBest()

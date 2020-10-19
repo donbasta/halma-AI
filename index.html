@@ -180,7 +180,7 @@
                                     document.getElementById("bot-move-count").innerHTML = "Bot move count: " + botMoveCount
                                 } else {
                                     // kalo tidak terminal lanjut
-                                    await new Promise(r => setTimeout(r, 200))
+                                    // await new Promise(r => setTimeout(r, 200))
                                     if (playerMode !== -1) {
                                         if ((playerMode === 1 && turn === 1) || (playerMode === 0 && turn === 0)) {
                                             let timer = document.getElementById("countdown-timer")
@@ -202,6 +202,7 @@
                                         gameState.player = turn + 1
                                         if (turn === 1) {
                                             botMove(gameState, "minimax")
+                                            // botMove(gameState, "minimax-local-search")
                                             botMoveCount++
                                         } else {
                                             botMove(gameState, "minimax-local-search")
@@ -283,6 +284,7 @@
             }
             if (playerMode === -1) {
                 botMove(gameState, "minimax")
+                // botMove(gameState, "minimax-local-search")
             }
             // console.log('udah')
             document.getElementsByClassName("select-game-modal")[0].setAttribute("style", "display: none;")
