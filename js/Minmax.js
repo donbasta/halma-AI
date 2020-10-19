@@ -164,7 +164,12 @@ function botMove(gameState, botType) {
   if (botType === "minimax-local-search") {
       botMoveMinimaxPruning.getMoveRandom()
       bestMove = botMoveMinimaxPruning.nextMoveRandom
+      if (!bestMove) {
+        botMoveMinimaxPruning.getMoveBest()
+        bestMove = botMoveMinimaxPruning.nextMoveBest
+      }
   }
+  console.log(bestMove)
   // console.log(gameState)
   // console.log(bestMove.board)
   let compareResult = compareGameState(gameState, bestMove)

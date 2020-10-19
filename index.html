@@ -22,7 +22,7 @@
             </form>
             <form class="radio-container">
                 <h4>T - Limit (in seconds): </h4>
-                <input type="text" name="t-limit" id="t-limit" value="10">
+                <input type="number" name="t-limit" id="t-limit" value="10" min="1">
             </form>
             <form class="radio-container">
                 <h4>Select Player Color : </h4>
@@ -47,7 +47,7 @@
     </div>
     <div class="select-game-modal" style="z-index: 999">
         <div class="select-game">
-            <h3>CONGRATULATIONS</h3>
+            <h1>CONGRATULATIONS</h1>
             <p id="player-wins">Player wins!</p>
             <p id="bot-move-count">Bot Move Count : </p>
         </div>
@@ -56,6 +56,10 @@
         <div class="title">
             <h1>Halma</h1>
         </div>
+        <div class="countdown">
+            <h2><span id="countdown-timer">0</span> seconds left</h2>
+        </div>
+
         <div class="content">
             <div id="board">
                 
@@ -72,33 +76,12 @@
         var tLImit = null
         var playerMode = null
 
-        // /* Initial Matrix */
-        // let matrix = [
-        //     [1,1,1,0,0,0,0,0],
-        //     [1,1,0,0,0,0,0,0],
-        //     [1,1,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,2,2,2],
-        //     [0,0,0,0,0,2,2,2],
-        // ]
-
-        // /* Matrix untuk state click */
-        // let clickState = [
-        //     [1,1,1,0,0,0,0,0],
-        //     [1,1,0,0,0,0,0,0],
-        //     [1,1,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,0,0,0],
-        //     [0,0,0,0,0,1,1,1],
-        //     [0,0,0,0,0,1,1,1],
-        // ]
         let gameState = null
         let userClicked = null
         let turn = 1
         let botMoveCount = 0
+        let timeout = null
+        let interval = null
 
         /* Selected Cell */
         // let selectedCell = null
@@ -166,6 +149,8 @@
                             if (clickmat[i][j] !== 3) {
                                 // console.log(clickmat[i][j])
                                 // cek state terminal
+                                clearTimeout(timeout)
+                                clearInterval(interval)
                                 let terminalStatus = terminalState(gameState)
                                 console.log("botMoveCount : " + botMoveCount)
                                 if(terminalStatus == 1) {
@@ -180,7 +165,19 @@
                                     // kalo tidak terminal lanjut
                                     await new Promise(r => setTimeout(r, 200))
                                     if (playerMode !== -1) {
-                                        if (turn === 1) {
+                                        if ((playerMode === 1 && turn === 1) || (playerMode === 0 && turn === 0)) {
+                                            let timer = document.getElementById("countdown-timer")
+                                            timer.innerHTML = (tLimit / 1000).toString(10)
+                                            interval = setInterval(() => {
+                                                let timer = document.getElementById("countdown-timer")
+                                                timer.innerHTML = (parseInt(timer.innerHTML) - 1).toString(10)
+                                            }, 1000)
+                                            timeout = setTimeout(() => {
+                                                turn = turn ^ 1
+                                                botMove(gameState, botType)
+                                            }, tLimit)
+                                        }
+                                        if((playerMode === 0 && turn === 1) || (playerMode === 1 && turn === 0)){
                                             botMove(gameState, botType)
                                             botMoveCount++
                                         }
@@ -194,16 +191,7 @@
                                             botMoveCount++
                                         }
                                     }
-                                    // if (turn === 1) {
-                                    //     if (playerMode === -1) {
-                                    //         botMove(gameState, "minimax-local-search")
-                                    //         gameState.player = 2 - turn
-                                    //     } else {
-                                    //         botMove(gameState, botType)
-                                    //     }
-                                    // }
-                                    turn = (turn + 1) % 2
-
+                                    turn = (turn ^ 1);
                                 }
                             }
                             for(let a = 0; a < siz; a++) {
@@ -229,7 +217,7 @@
         playButton = document.getElementById("play-button").addEventListener('click', () => {
             forms = document.getElementsByClassName("radio-container")
             bSize = Array.from(forms[0].childNodes).filter((child) => child.checked)[0].value
-            tLimit = parseInt(document.getElementById("t-limit").value)
+            tLimit = parseInt(document.getElementById("t-limit").value) * 1000
             playerMode = parseInt(Array.from(forms[2]).filter((child) => child.checked)[0].value)
             botType = Array.from(forms[3]).filter((child) => child.checked)[0].value
             // console.log(playerMode)
@@ -238,9 +226,22 @@
             gameState = new GameState(null, bSize, botTurn)
             // botMove(gameState, botType)
             createBoard(gameState.board, gameState.clickState, gameState.selectedCell, gameState, bSize, playerMode, botType)
-            if (playerMode === 0) {
-                turn = 0
-                botMove(gameState, botType)
+            if (playerMode === 0 || playerMode === 1) {
+                turn  = 1
+                if(playerMode === 1) {
+                    turn  = 0
+                }
+                let timer = document.getElementById("countdown-timer")
+                timer.innerHTML = (tLimit/1000).toString(10)
+                interval = setInterval(() => {
+                    let timer = document.getElementById("countdown-timer")
+                    timer.innerHTML = (parseInt(timer.innerHTML) - 1).toString(10)
+                }, 1000)
+                timeout = setTimeout(() => {
+                    turn = turn ^ 1
+                    botMove(gameState, botType)
+                }, tLimit)
+                //botMove(gameState, botType)
             }
             if (playerMode === -1) {
                 botMove(gameState, "minimax")
