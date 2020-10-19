@@ -68,8 +68,14 @@ function positionInCorner(x, y, BSize, playerType) {
     x = BSize - x - 1;
     y = BSize - y - 1;
   }
-  if (x == 5 || y == 5) return false;
-  return (x + y <= 5);
+  if (BSize == 16) {
+    if (x == 5 || y == 5) return false;
+    return (x + y <= 5);
+  } else if (BSize == 10) {
+    return (x + y <= 4);
+  } else if (BSize == 8) {
+    return (x + y <= 3);
+  }
 }
 
 function utilityFunction(board, PType) {
