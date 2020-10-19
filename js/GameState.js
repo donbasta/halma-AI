@@ -33,7 +33,7 @@ class GameState {
     } else if (size == 10) {
       pawnConfig = CNT_10;
     } else if (size == 16) {
-      pawnConfig == CNT_16;
+      pawnConfig = CNT_16;
     }
     for (let i = 0; i < pawnConfig.length; i++) {
       for (let j = 0; j < pawnConfig[i]; j++) {
