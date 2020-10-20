@@ -2,7 +2,12 @@
 const INF = 99999999999;
 const DX = [0, 0, 1, -1, 1, 1, -1, -1];
 const DY = [1, -1, 0, 0, -1, 1, 1, -1];
-const NUMBER_OF_PAWN = 19;
+
+function getNumOfPawn(BSize) {
+  if (BSize <= 8) return 10;
+  if (8 < BSize && BSize < 16) return 15;
+  if (BSize >= 16) return 19;
+}
 
 function findAvailablePositions(x, y, board) {
   const BSize = board.length;
@@ -128,11 +133,11 @@ function utilityFunction(board, PType) {
     return retValue;
   }
 
-  if(count(2) == NUMBER_OF_PAWN) {
+  if (count(2) == getNumOfPawn(BSize)) {
     return -INF;
   }
 
-  if(count(1) == NUMBER_OF_PAWN) {
+  if (count(1) == getNumOfPawn(BSize)) {
     return INF;
   }
 
@@ -258,7 +263,7 @@ function terminalState(state) {
     }
   }
   for (let i = 0; i < 2; i++) {
-    if (cntInCorner[i] == NUMBER_OF_PAWN)
+    if (cntInCorner[i] == getNumOfPawn(BSize))
       return i + 1;
   }
   return 0;
