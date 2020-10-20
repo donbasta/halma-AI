@@ -4,7 +4,6 @@ const COOLING_RATE = 0.99;
 //const INF = 10000000000;
 
 let globTemp = 10000;
-// const INF = 1000000000;
 
 //implement the node of the minimax tree
 class Node {
@@ -29,6 +28,10 @@ class MinimaxTree {
   expand(node, depth) {
     if (depth == 0) {
       node.minimax = utilityFunction(node.state.board, this.root.state.player);
+      let count = countPawnInTarget(this.root.state.board, this.root.state.player);
+      if (countPawnInTarget(node.state.board, this.root.state.player) == count) {
+        node.minimax = node.minimax * 10;
+      }
       return;
     }
 
@@ -45,9 +48,9 @@ class MinimaxTree {
       let childNode = new Node(neighbor);
       this.expand(childNode, depth - 1);
       node.children.push(childNode);
-      if (node.state.player == 1) {
+      if (node.state.player === 1) {
         tempValue = Math.max(tempValue, childNode.minimax);
-      } else if (node.state.player == 2) {
+      } else if (node.state.player === 2) {
         tempValue = Math.min(tempValue, childNode.minimax);
       }
     }
@@ -56,15 +59,19 @@ class MinimaxTree {
 
   //for alpha beta pruning
   expandPruning(node, depth, alpha, beta) {
-    if (depth == 0) {
+    if (depth === 0) {
       node.minimax = utilityFunction(node.state.board, this.root.state.player);
+      let count = countPawnInTarget(this.root.state.board, this.root.state.player);
+      if (countPawnInTarget(node.state.board, this.root.state.player) === count) {
+        node.minimax = node.minimax * 10;
+      }
       return;
     }
 
     let tempValue;
-    if (node.state.player == 1) {
+    if (node.state.player === 1) {
       tempValue = -INF;
-    } else if (node.state.player == 2) {
+    } else if (node.state.player === 2) {
       tempValue = INF;
     }
 
@@ -101,41 +108,33 @@ class Minimax {
     this.player = state.player;
     this.state = state;
     this.utilValue = utilityFunction(this.state.board, this.player);
-    // this.temperature = INIT_TEMPERATURE;
   }
 
   getMoveBest() {
     let ret;
-    let best = -INF;
-    let numPawnInTarget = countPawnInTarget(this.state.board, this.player);
-    if (this.player === 2) {
-      best = INF;
-    }
+    // let best = -INF;
+    // if (this.player === 2) {
+    //   best = INF;
+    // }
+    // this.tree.root.children.forEach (neighbor => {
+    //   if (countPawnInTarget(neighbor.state.board, this.player) === numPawnInTarget) {
+    //     neighbor.minimax = neighbor.minimax * 10;
+    //   }
+    //   if (this.player === 1) {
+    //     best = Math.max(best, neighbor.minimax);
+    //   } else if (this.player === 2) {
+    //     best = Math.min(best, neighbor.minimax);
+    //   }
+    //   if (neighbor.minimax === this.value) {
+    //     ret = neighbor.state;
+    //   }
+    // });
     this.tree.root.children.forEach (neighbor => {
-      //let curUtilFunc = neighbor.minimax;
-      // console.log("test: ", neighbor)
-      // console.log("test: ", neighbor.board)
-      if (countPawnInTarget(neighbor.state.board, this.player) === numPawnInTarget) {
-        neighbor.minimax = neighbor.minimax * 10;
-      }
-      if (this.player === 1) {
-        best = Math.max(best, neighbor.minimax);
-      } else if (this.player === 2) {
-        best = Math.min(best, neighbor.minimax);
-      }
-      if (neighbor.minimax === this.value) {
+      if (neighbor.minimax === this.tree.root.minimax) {
         ret = neighbor.state;
       }
     });
-    this.tree.root.children.forEach (neighbor => {
-      //let curUtilFunc = neighbor.minimax;
-      // if (countPawnInTarget(neighbor.board) === numPawnInTarget) {
-      //   curUtilFunc = curUtilFunc * 1.5;
-      // }
-      if (best == neighbor.minimax) {
-        ret = neighbor.state;
-      }
-    });
+    console.log(`Minimax: ${this.tree.root.minimax}`);
     this.nextMoveBest = ret;
   }
 
@@ -144,7 +143,7 @@ class Minimax {
     let curValue = this.value;
     let attempt = 0;
     let temp = max(10, globTemp);
-    console.log(`Temperature: ${temp}`);
+    // console.log(`Temperature: ${temp}`);
     while(attempt < MAX_ATTEMPT) {
       let randomPosition = Math.floor(Math.random() * this.neighbors.length);
       let randomNeighbor = this.neighbors[randomPosition];

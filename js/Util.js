@@ -299,9 +299,10 @@ function compareGameState(stateBefore, stateAfter) {
 
 function countPawnInTarget(board, PType) {
   let ret = 0;
+  let otherPlayer = 3 - PType;
   for(let i = 0; i < board.length; i++) {
     for(let j = 0; j < board.length; j++) {
-      if(board[i][j] == PType && positionInCorner(i, j, board.length, 1)) {
+      if(board[i][j] === PType && positionInCorner(i, j, board.length, otherPlayer)) {
         ret++;
       }
     }
