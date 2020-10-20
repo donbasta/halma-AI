@@ -164,6 +164,7 @@
 
                             selectedCell = null 
                             if (clickmat[i][j] !== 3) {
+                                console.log("turn : " + turn.toString())
                                 // console.log(clickmat[i][j])
                                 // cek state terminal
                                 clearTimeout(timeout)
@@ -182,7 +183,7 @@
                                     // kalo tidak terminal lanjut
                                     // await new Promise(r => setTimeout(r, 200))
                                     if (playerMode !== -1) {
-                                        if ((playerMode === 1 && turn === 1) || (playerMode === 0 && turn === 0)) {
+                                        if (turn === 1) {
                                             let timer = document.getElementById("countdown-timer")
                                             timer.innerHTML = (tLimit / 1000).toString(10)
                                             interval = setInterval(() => {
@@ -193,8 +194,7 @@
                                                 turn = turn ^ 1
                                                 botMove(gameState, botType)
                                             }, tLimit)
-                                        }
-                                        if((playerMode === 0 && turn === 1) || (playerMode === 1 && turn === 0)){
+                                        } else {
                                             botMove(gameState, botType)
                                             botMoveCount++
                                         }
@@ -209,37 +209,51 @@
                                             botMoveCount++
                                         }
                                     }
+                                    /*if(playerMode === -1) {
+                                        for(let a = 0; a < siz; a++) {
+                                            for(let b = 0; b < siz; b++) {
+                                                if(mat[a][b] > 0) {
+                                                    clickmat[a][b] = 1
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        if((playerMode == 1 && turn == 0) || (playerMode == 0 && turn == 0)){
+                                            for(let a = 0; a < siz; a++) {
+                                                for(let b = 0; b < siz; b++) {
+                                                    if(mat[a][b] == 2) {
+                                                        clickmat[a][b] = 1
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            for(let a = 0; a < siz; a++) {
+                                                for(let b = 0; b < siz; b++) {
+                                                    if(mat[a][b] == 1) {
+                                                        clickmat[a][b] = 1
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } */
+                                    
                                     turn = (turn ^ 1);
+
+                                    
+                                }
+                                
+                            }
+
+                            for(let a = 0; a < siz; a++) {
+                                for(let b = 0; b < siz; b++) {
+                                    if(mat[a][b] > 0) {
+                                        clickmat[a][b] = 1
+                                    }
                                 }
                             }
 
-                            if(playerMode === -1) {
-                                for(let a = 0; a < siz; a++) {
-                                    for(let b = 0; b < siz; b++) {
-                                        if(mat[a][b] > 0) {
-                                            clickmat[a][b] = 1
-                                        }
-                                    }
-                                }
-                            } else {
-                                if((playerMode == 1 && turn == 1) || (playerMode == 0 && turn == 1)){
-                                    for(let a = 0; a < siz; a++) {
-                                        for(let b = 0; b < siz; b++) {
-                                            if(mat[a][b] == 2) {
-                                                clickmat[a][b] = 1
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    for(let a = 0; a < siz; a++) {
-                                        for(let b = 0; b < siz; b++) {
-                                            if(mat[a][b] == 1) {
-                                                clickmat[a][b] = 1
-                                            }
-                                        }
-                                    }
-                                }
-                            } 
+                            
+                            
 
                             document.querySelectorAll('.avail').forEach((node) => {
                                 node.remove()
@@ -266,10 +280,7 @@
             // botMove(gameState, botType)
             createBoard(gameState.board, gameState.clickState, gameState.selectedCell, gameState, bSize, playerMode, botType)
             if (playerMode === 0 || playerMode === 1) {
-                turn  = 1
-                if(playerMode === 1) {
-                    turn  = 0
-                }
+                turn = 0
                 let timer = document.getElementById("countdown-timer")
                 timer.innerHTML = (tLimit/1000).toString(10)
                 interval = setInterval(() => {
