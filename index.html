@@ -68,6 +68,7 @@
             <h1>Halma</h1>
         </div>
         <div class="countdown">
+            <h2><span id="player-turn-indicator">Red</span> Player's turn</h2>
             <h2><span id="countdown-timer">0</span> seconds left</h2>
         </div>
 
@@ -238,7 +239,7 @@
                                     } */
                                     
                                     turn = (turn ^ 1);
-
+                                    document.getElementById("player-turn-indicator").innerText = turn === 0 ? "Red" : "Green"
                                     
                                 }
                                 
