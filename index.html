@@ -203,10 +203,11 @@
                                         gameState.player = turn + 1
                                         if (turn === 1) {
                                             botMove(gameState, "minimax")
-                                            // botMove(gameState, "minimax-local-search")
+                                            //botMove(gameState, "minimax-local-search")
                                             botMoveCount++
                                         } else {
-                                            botMove(gameState, "minimax-local-search")
+                                            botMove(gameState, "minimax")
+                                            //botMove(gameState, "minimax-local-search")
                                             botMoveCount++
                                         }
                                     }

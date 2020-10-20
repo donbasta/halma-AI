@@ -1,6 +1,7 @@
 const DEPTH = 3;
 const INIT_TEMPERATURE = 10000;
-const COOLING_RATE = 0.9999;
+const COOLING_RATE = 0.99;
+//const INF = 10000000000;
 
 let globTemp = 10000;
 // const INF = 1000000000;
@@ -27,7 +28,7 @@ class MinimaxTree {
 
   expand(node, depth) {
     if (depth == 0) {
-      node.minimax = utilityFunction(node.state.board, node.state.player);
+      node.minimax = utilityFunction(node.state.board, this.root.state.player);
       return;
     }
 
@@ -53,10 +54,10 @@ class MinimaxTree {
     node.minimax = tempValue;
   }
 
-  //for alpha-beta pruning, not fixed yet
+  //for alpha beta pruning
   expandPruning(node, depth, alpha, beta) {
     if (depth == 0) {
-      node.minimax = utilityFunction(node.state.board, node.state.player);
+      node.minimax = utilityFunction(node.state.board, this.root.state.player);
       return;
     }
 
@@ -105,8 +106,33 @@ class Minimax {
 
   getMoveBest() {
     let ret;
+    let best = -INF;
+    let numPawnInTarget = countPawnInTarget(this.state.board, this.player);
+    if (this.player === 2) {
+      best = INF;
+    }
     this.tree.root.children.forEach (neighbor => {
-      if (neighbor.minimax == this.value) {
+      //let curUtilFunc = neighbor.minimax;
+      // console.log("test: ", neighbor)
+      // console.log("test: ", neighbor.board)
+      if (countPawnInTarget(neighbor.state.board, this.player) === numPawnInTarget) {
+        neighbor.minimax = neighbor.minimax * 10;
+      }
+      if (this.player === 1) {
+        best = Math.max(best, neighbor.minimax);
+      } else if (this.player === 2) {
+        best = Math.min(best, neighbor.minimax);
+      }
+      if (neighbor.minimax === this.value) {
+        ret = neighbor.state;
+      }
+    });
+    this.tree.root.children.forEach (neighbor => {
+      //let curUtilFunc = neighbor.minimax;
+      // if (countPawnInTarget(neighbor.board) === numPawnInTarget) {
+      //   curUtilFunc = curUtilFunc * 1.5;
+      // }
+      if (best == neighbor.minimax) {
         ret = neighbor.state;
       }
     });
@@ -117,7 +143,7 @@ class Minimax {
     const MAX_ATTEMPT = 100;
     let curValue = this.value;
     let attempt = 0;
-    let temp = globTemp;
+    let temp = max(10, globTemp);
     console.log(`Temperature: ${temp}`);
     while(attempt < MAX_ATTEMPT) {
       let randomPosition = Math.floor(Math.random() * this.neighbors.length);
@@ -167,7 +193,7 @@ class Minimax {
 
 function botMove(gameState, botType) {
   // console.log(gameState.player)
-  let botMoveMinimaxPruning = new Minimax(gameState, 3, true)
+  let botMoveMinimaxPruning = new Minimax(gameState, 2, true)
   let bestMove = null
   if (botType === "minimax") {
       botMoveMinimaxPruning.getMoveBest()

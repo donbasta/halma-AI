@@ -141,7 +141,14 @@ function utilityFunction(board, PType) {
     return INF;
   }
 
-  return F(2) - F(1);
+  if(PType == 1) {
+    return 0.05 * F(2) - F(1);
+  }
+
+  if(PType == 2) {
+    return F(2) - 0.05 * F(1);
+  }
+  //return F(2) - F(1);
 }
 
 function generateNextState(state) {
@@ -288,6 +295,18 @@ function compareGameState(stateBefore, stateAfter) {
     }
   }
   return [[xBef, yBef], [xAf, yAf]];
+}
+
+function countPawnInTarget(board, PType) {
+  let ret = 0;
+  for(let i = 0; i < board.length; i++) {
+    for(let j = 0; j < board.length; j++) {
+      if(board[i][j] == PType && positionInCorner(i, j, board.length, 1)) {
+        ret++;
+      }
+    }
+  }
+  return ret;
 }
 
 // For Debugging Purposes
