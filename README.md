@@ -3,16 +3,18 @@ Projects for course IF3170 Artificial Intelligence
 
 ## Introduction
 
-This halma game is done as part of completing course IF3170 Artificial Intelligence in 
+This halma game is done as part of completing the course IF3170 Artificial Intelligence in 
 Institut Teknologi Bandung. The core of the project is implementing AI in the bot (computer player),
-using Minimax Algorithm and Local Search Algorithms (Hill Climbing or Simulated Annealing), or both, 
-and finding out how each bot performs.
+using Minimax Algorithm, Local Search Algorithms (Hill Climbing or Simulated Annealing), and both, 
+and finding out how good each algorithm performs.
 
-The app made is web-based, and written in vanilla HTML + CSS + Javascript.
+The app is web-based, and written in vanilla HTML + CSS + Javascript.
+
+You can play the game [here](halma-euy.netlify.app)
 
 ## Requirements
 
-Browser that can run Javascript
+Browser that can run Javascript.
 
 ### Running the Program
 
@@ -41,7 +43,7 @@ If you win, the game will end and a popup will appear.
 
 ![End](/img/end.jpg)
 
-## Contributors
+## Contributors (EUY)
 
 - Muhammad Hasan (13518012)
 - Farras Mohammad Hibban Faddila (13518017)
