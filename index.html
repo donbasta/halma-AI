@@ -239,7 +239,11 @@
                                     } */
                                     
                                     turn = (turn ^ 1);
-                                    document.getElementById("player-turn-indicator").innerText = turn === 0 ? "Red" : "Green"
+                                    if(playerMode === 1){
+                                        document.getElementById("player-turn-indicator").innerText = turn === 0 ? "Red" : "Green"
+                                    } else {
+                                        document.getElementById("player-turn-indicator").innerText = turn === 1 ? "Red" : "Green"
+                                    }
                                     
                                 }
                                 
@@ -281,6 +285,11 @@
             // botMove(gameState, botType)
             createBoard(gameState.board, gameState.clickState, gameState.selectedCell, gameState, bSize, playerMode, botType)
             if (playerMode === 0 || playerMode === 1) {
+                if(playerMode === 1){
+                    document.getElementById("player-turn-indicator").innerText = "Red"
+                } else {
+                    document.getElementById("player-turn-indicator").innerText = "Green"
+                }
                 turn = 0
                 let timer = document.getElementById("countdown-timer")
                 timer.innerHTML = (tLimit/1000).toString(10)
