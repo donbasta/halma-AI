@@ -1,5 +1,7 @@
 
-const CNT = [5, 5, 4, 3, 2];
+const CNT_16 = [5, 5, 4, 3, 2];
+const CNT_10 = [5, 4, 3, 2, 1];
+const CNT_8 = [4, 3, 2, 1];
 
 class GameState {
   constructor(board, size, player) {
@@ -25,8 +27,16 @@ class GameState {
         this.clickState[i][j] = 0;
       }
     }
-    for (let i = 0; i < 5; i++) {
-      for (let j = 0; j < CNT[i]; j++) {
+    let pawnConfig = null;
+    if(size == 8) {
+      pawnConfig = CNT_8;
+    } else if (size == 10) {
+      pawnConfig = CNT_10;
+    } else if (size == 16) {
+      pawnConfig = CNT_16;
+    }
+    for (let i = 0; i < pawnConfig.length; i++) {
+      for (let j = 0; j < pawnConfig[i]; j++) {
         this.board[i][j] = 1;
         this.board[this.size - i - 1][this.size - j - 1] = 2;
         this.clickState[i][j] = 1;

@@ -1,4 +1,8 @@
 const DEPTH = 3;
+const INIT_TEMPERATURE = 10000;
+const COOLING_RATE = 0.9999;
+
+let globTemp = 10000;
 // const INF = 1000000000;
 
 //implement the node of the minimax tree
@@ -96,6 +100,7 @@ class Minimax {
     this.player = state.player;
     this.state = state;
     this.utilValue = utilityFunction(this.state.board, this.player);
+    // this.temperature = INIT_TEMPERATURE;
   }
 
   getMoveBest() {
@@ -112,6 +117,8 @@ class Minimax {
     const MAX_ATTEMPT = 100;
     let curValue = this.value;
     let attempt = 0;
+    let temp = globTemp;
+    console.log(`Temperature: ${temp}`);
     while(attempt < MAX_ATTEMPT) {
       let randomPosition = Math.floor(Math.random() * this.neighbors.length);
       let randomNeighbor = this.neighbors[randomPosition];
@@ -119,14 +126,16 @@ class Minimax {
       if (this.player == 1) {
         if (nextValue >= this.utilValue) {
           this.nextMoveRandom = randomNeighbor;
+          globTemp = globTemp * COOLING_RATE;
           return;
         } else {
           let delta = Math.abs(this.utilValue - nextValue);
-          let temp = 10;
+          // let temp = 10;
           let prob = 1.0 / Math.pow(Math.E, delta / temp);
           let random = Math.random();
           if(random <= prob) {
             this.nextMoveRandom = randomNeighbor;
+            globTemp = globTemp * COOLING_RATE;
             return;
           } else {
             attempt = attempt + 1;
@@ -135,14 +144,16 @@ class Minimax {
       } else if (this.player == 2) {
         if (nextValue <= this.utilValue) {
           this.nextMoveRandom = randomNeighbor;
+          globTemp = globTemp * COOLING_RATE;
           return;
         } else {
           let delta = Math.abs(this.utilValue - nextValue);
-          let temp = 10;
+          // let temp = 10;
           let prob = 1.0 / Math.pow(Math.E, delta / temp);
           let random = Math.random();
           if(random <= prob) {
             this.nextMoveRandom = randomNeighbor;
+            globTemp = globTemp * COOLING_RATE;
             return;
           } else {
             attempt = attempt + 1;
@@ -156,7 +167,7 @@ class Minimax {
 
 function botMove(gameState, botType) {
   // console.log(gameState.player)
-  let botMoveMinimaxPruning = new Minimax(gameState, 2, true)
+  let botMoveMinimaxPruning = new Minimax(gameState, 3, true)
   let bestMove = null
   if (botType === "minimax") {
       botMoveMinimaxPruning.getMoveBest()
