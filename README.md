@@ -22,7 +22,7 @@ Open `index.html` in the browser.
 
 Upon opening the program, this menu will appear.
 
-![Menu](/images/menu.png)
+![Menu](/img/menu.jpg)
 
 Each configuration is described as follows:
 
@@ -35,11 +35,11 @@ Please note that the current game doesn't allow for human player v human player 
 
 The game display looks like this, for B-Size = 16.
 
-![Main](/images/main.png)
+![Main](/img/main.jpg)
 
 If you win, the game will end and a popup will appear.
 
-![End](/images/end.png)
+![End](/img/end.jpg)
 
 ## Contributors
 
