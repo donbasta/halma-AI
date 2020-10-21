@@ -10,7 +10,7 @@ and finding out how good each algorithm performs.
 
 The app is web-based, and written in vanilla HTML + CSS + Javascript.
 
-You can play the game [here](halma-euy.netlify.app)
+You can play the game [here](https://halma-euy.netlify.app)
 
 ## Requirements
 
